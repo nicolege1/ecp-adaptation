@@ -1,0 +1,1039 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Адаптация ЕЦП</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --olive:#6E7835;
+  --olive-dark:#5A632B;
+  --olive-light:#AFBD80;
+  --olive-tint:#EEF1E3;
+  --red:#C82E3E;
+  --pink:#BB697B;
+  --ink:#212529;
+  --muted:#6C7277;
+  --line:#E3E4E6;
+  --band:#F5F5F5;
+  --bg:#FFFFFF;
+  --ok:#3E8E5A;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 "Golos Text",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+button{font:inherit;cursor:pointer}
+a{color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+
+/* шапка */
+.top{background:var(--olive);color:#fff}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:68px;gap:16px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.brand-mark{width:34px;height:34px;border:1.5px solid rgba(255,255,255,.8);border-radius:6px;display:grid;place-items:center;font-weight:700;font-size:13px;letter-spacing:.04em}
+.brand b{display:block;font-size:15px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.brand small{display:block;font-size:11px;opacity:.75;letter-spacing:.02em;line-height:1.2}
+.user{display:flex;align-items:center;gap:12px;font-size:14px;text-align:right;color:#fff;text-decoration:none;background:none;border:0;padding:4px;cursor:pointer;font:inherit;font-size:14px}
+.umenu{position:relative}
+.dropdown{display:none;position:absolute;right:0;top:calc(100% + 8px);width:280px;background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 32px rgba(33,37,41,.14);padding:8px 0;z-index:20;text-align:left}
+.umenu.open .dropdown{display:block}
+.dd-head{display:flex;gap:12px;align-items:center;padding:12px 18px 14px;border-bottom:1px solid var(--line);margin-bottom:6px}
+.dd-head b{display:block;font-weight:600;font-size:15px}
+.dd-head small{display:block;color:var(--muted);font-size:13px}
+.dropdown a,.dropdown button{display:block;width:100%;text-align:left;padding:10px 18px;color:var(--ink);text-decoration:none;background:none;border:0;font:inherit;font-size:15px;cursor:pointer}
+.dropdown a:hover,.dropdown button:hover{background:var(--olive-tint)}
+.avatar{overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.avatar-dd{background:var(--olive)!important;color:#fff;width:42px;height:42px}
+.avatar-xl{width:120px!important;height:120px!important;font-size:38px!important;background:var(--olive-light)!important;color:#fff}
+.profile2{grid-template-columns:240px 1fr!important}
+.pside{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px}
+.pname{font-size:18px;font-weight:600;margin-top:8px}
+.pmeta{color:var(--muted);font-size:14px}
+.pside .btn{margin-top:10px;text-decoration:none}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+.stat{border:1px solid var(--line);padding:22px 16px;text-align:center}
+.stat b{display:block;font-size:30px;font-weight:500;color:var(--ink)}
+.stat span{display:block;color:var(--muted);font-size:13.5px;margin-top:6px}
+.settings{grid-template-columns:minmax(0,720px)!important}
+.shead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.shead h2{margin:0}
+.slink{background:none;border:0;padding:0;font:inherit;font-size:15px;color:var(--olive);font-weight:600;cursor:pointer}
+.slink:hover{text-decoration:underline;text-underline-offset:3px}
+.slink.danger{color:var(--red)}
+.srow{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-top:1px solid var(--line);align-items:center}
+.slabel{color:var(--muted)}
+.sempty{color:var(--muted)}
+.sphoto{display:flex;gap:24px;align-items:center}
+.upload{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;color:var(--olive);font-size:14px;font-weight:600;margin:0}
+.pabout{color:var(--muted);margin:4px 0 8px}
+.sform label{margin-top:4px}
+.sform textarea{width:100%;font:inherit;padding:13px 14px;border:1.5px solid var(--line);border-radius:10px;margin-bottom:18px;resize:vertical}
+.sform .pform-act{display:flex;gap:12px}
+.user:hover .linkbtn{opacity:1}
+.crumbs a{color:inherit}
+.pcard{border:1px solid var(--line);padding:26px 28px;margin-bottom:24px;background:#fff}
+.pcard h2{font-size:20px;margin:0 0 20px}
+.pform{display:grid;grid-template-columns:1fr 1fr;gap:4px 20px}
+.pform input,.pform select{margin-bottom:14px}
+.pform-act{grid-column:1/-1;display:flex;align-items:center;gap:16px}
+.saved{color:var(--ok);font-size:14px;font-weight:500}
+.rtable{width:100%;border-collapse:collapse;font-size:15px}
+.rtable th{text-align:left;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500;padding:0 10px 10px 0;border-bottom:1px solid var(--line)}
+.rtable td{padding:12px 10px 12px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.rtable tr.grp td{background:var(--olive-tint);font-weight:500;padding:10px 12px}
+.rtable td.ok{color:var(--ok);white-space:nowrap}
+.rtable td.no{color:var(--muted);white-space:nowrap}
+.rtable td.bad{color:var(--red);white-space:nowrap}
+.rtable td.dt{color:var(--muted);white-space:nowrap;font-size:14px}
+.btn.wide{width:100%;margin-top:10px}
+.tab{cursor:default}
+button.tab{cursor:pointer}
+a.tab{text-decoration:none;cursor:pointer}
+.user small{display:block;opacity:.7;font-size:12px}
+.avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center;font-weight:600;font-size:14px;flex:none}
+.linkbtn{background:none;border:0;color:inherit;opacity:.75;font-size:13px;padding:0;text-decoration:underline;text-underline-offset:3px}
+.linkbtn:hover{opacity:1}
+
+/* полоса с названием */
+.band{background:var(--band);border-bottom:1px solid var(--line)}
+.band .wrap{padding-top:28px}
+.crumbs{font-size:14px;color:var(--muted);margin-bottom:10px}
+.titlerow{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+h1{font-size:34px;line-height:1.2;font-weight:600;margin:0;letter-spacing:-.01em}
+.btn{background:var(--olive);color:#fff;border:0;border-radius:999px;padding:13px 30px;font-weight:600;font-size:15px;transition:background .15s}
+.btn:hover{background:var(--olive-dark)}
+.btn:disabled{background:#C9CCC0;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--olive);box-shadow:inset 0 0 0 1.5px var(--olive)}
+.btn.ghost:hover{background:var(--olive-tint)}
+.tabs{display:flex;gap:36px;margin-top:26px}
+.tab{background:none;border:0;padding:0 0 14px;font-size:17px;color:var(--muted);border-bottom:3px solid transparent}
+.tab.on{color:var(--ink);border-color:var(--ink)}
+
+/* главная */
+.main{display:grid;grid-template-columns:1fr 340px;gap:56px;padding:44px 32px 80px;max-width:1180px;margin:0 auto}
+h2{font-size:24px;font-weight:600;margin:0 0 18px}
+.bar{display:flex;align-items:center;gap:20px}
+.track{flex:1;height:14px;background:#E6E8E1;border-radius:3px;overflow:hidden}
+.fill{height:100%;background:var(--olive);transition:width .4s}
+.pct{font-size:38px;font-weight:500;min-width:96px;text-align:right}
+.counters{display:flex;gap:40px;margin:26px 0 52px;flex-wrap:wrap}
+.counter{display:flex;align-items:center;gap:14px}
+.ring{--p:0;width:58px;height:58px;border-radius:50%;background:conic-gradient(var(--olive) calc(var(--p)*1%),#E6E8E1 0);display:grid;place-items:center}
+.ring::after{content:"";width:50px;height:50px;border-radius:50%;background:#fff;grid-area:1/1}
+.ring svg{grid-area:1/1;z-index:1;width:22px;height:22px;color:var(--olive)}
+.counter small{display:block;color:var(--muted);font-size:14px}
+.counter b{font-weight:500;font-size:20px}
+.sub{font-size:26px;color:var(--muted);font-weight:500;margin:0 0 22px}
+
+.mod{border:1px solid var(--line);margin-bottom:24px;background:#fff}
+.mod-h{background:var(--olive-tint);padding:18px 26px;font-weight:500;display:flex;justify-content:space-between;gap:12px;align-items:center;width:100%;border:0;text-align:left;color:var(--ink);font-size:16px}
+button.mod-h{cursor:pointer}
+.mod-c{display:flex;align-items:center;gap:14px}
+.chev{width:9px;height:9px;border-right:1.6px solid var(--olive);border-bottom:1.6px solid var(--olive);transform:rotate(45deg) translateY(-3px);transition:transform .2s;display:inline-block}
+.mod.closed .chev{transform:rotate(-45deg)}
+.mod.closed .mod-rows{display:none}
+.sec-h{display:flex;justify-content:space-between;align-items:center;gap:14px;width:100%;padding:14px 26px;border:0;border-top:1px solid var(--line);background:#FAFBF7;text-align:left;font:inherit;font-size:15px;font-weight:600;color:var(--ink);cursor:pointer}
+.sec-h:hover{background:var(--olive-tint)}
+.sec-c{display:flex;align-items:center;gap:14px;font-size:13px;font-weight:400;color:var(--muted);white-space:nowrap}
+.sec.closed .sec-rows{display:none}
+.sec.closed .chev{transform:rotate(-45deg)}
+.toc-sec .sec-h{padding:11px 14px;font-size:13px;line-height:1.35}
+.toc-sec .sec-c{gap:10px;font-size:12px}
+.mod-h .mod-c{font-size:13px;color:var(--muted);font-weight:400;white-space:nowrap}
+.row{display:grid;grid-template-columns:32px 1fr 110px 28px;align-items:center;gap:16px;padding:18px 26px;border-top:1px solid var(--line);width:100%;background:#fff;border-left:0;border-right:0;border-bottom:0;text-align:left;color:var(--ink)}
+.row:hover:not(:disabled){background:#FAFBF7}
+.row:disabled{cursor:default;color:#A3A7AB}
+.row .ic{width:24px;height:24px;color:var(--muted)}
+.row:disabled .ic{color:#C4C7CA}
+.row .kind{color:var(--muted);font-size:15px}
+.rw,.mod-hw{position:relative}
+.rw .row{padding-right:68px}
+.mod-hw .mod-h{padding-right:68px}
+.fav,.vfav{background:none;border:0;padding:0;width:36px;height:36px;border-radius:8px;display:grid;place-items:center;color:var(--muted);flex:none}
+.fav{position:absolute;right:20px;top:50%;transform:translateY(-50%)}
+.fav:hover,.vfav:hover{color:var(--olive);background:var(--olive-tint)}
+.fav.on,.vfav.on{color:var(--olive)}
+.fav.on svg,.vfav.on svg{fill:currentColor}
+.tabn{display:inline-block;min-width:20px;padding:0 6px;margin-left:8px;border-radius:10px;background:var(--olive);color:#fff;font-size:12px;line-height:20px;text-align:center}
+.main.one{grid-template-columns:minmax(0,1fr)}
+.fav-empty{text-align:center;padding:56px 16px;color:var(--muted)}
+.fav-empty svg{width:40px;height:40px;color:var(--olive-light)}
+.fav-empty h2{color:var(--ink);margin:14px 0 6px}
+.fav-empty p{margin:0}
+.row:disabled .kind{color:#BFC2C5}
+.row.next{box-shadow:inset 3px 0 0 var(--olive)}
+.check{width:24px;height:24px;border-radius:50%;background:var(--ok);display:grid;place-items:center}
+.check svg{width:14px;height:14px;color:#fff}
+.lock{width:18px;height:18px;color:#C4C7CA}
+
+.card{border:1px solid var(--line);border-radius:18px;padding:26px 28px;box-shadow:0 6px 24px rgba(33,37,41,.06);position:sticky;top:24px;align-self:start}
+.card h3{font-size:24px;font-weight:500;color:var(--olive);margin:0 0 18px}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:8px 0;font-size:15px}
+.kv b{font-weight:600}
+.kv em{font-style:normal;color:var(--muted);font-weight:400}
+.card hr{border:0;border-top:1px solid var(--line);margin:10px 0}
+.badge{display:inline-block;margin-top:14px;padding:6px 14px;border-radius:999px;font-size:13px;font-weight:600}
+.badge.pass{background:#E3F1E7;color:var(--ok)}
+.badge.fail{background:#F8E4E6;color:var(--red)}
+
+.about{max-width:720px}
+.about p{margin:0 0 14px}
+
+/* просмотр темы и теста */
+.viewer-top{border-bottom:1px solid var(--line);background:#fff;position:sticky;top:0;z-index:5}
+.viewer-top .wrap{display:flex;align-items:center;justify-content:space-between;height:56px;gap:12px}
+.x{background:none;border:0;width:36px;height:36px;display:grid;place-items:center;color:var(--ink);border-radius:50%}
+.x:hover{background:var(--band)}
+.studied{display:inline-flex;align-items:center;gap:6px;background:var(--ok);color:#fff;font-size:13px;font-weight:600;padding:4px 12px 4px 8px;border-radius:6px}
+.studied svg{width:14px;height:14px}
+.vnav{border-bottom:1px solid var(--line)}
+.vnav .wrap{display:flex;justify-content:space-between;height:46px;align-items:center}
+.vnav button{background:none;border:0;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);display:flex;align-items:center;gap:8px;padding:0}
+.vnav button:disabled{color:#BFC2C5;cursor:default}
+
+.hero{background:var(--olive-light);color:#fff;text-align:center;padding:64px 24px 72px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;left:50%;bottom:-1px;transform:translateX(-50%);border:28px solid transparent;border-bottom-color:#fff;border-top:0}
+.hero small{display:block;font-size:14px;letter-spacing:.12em;text-transform:uppercase;opacity:.9;margin-bottom:14px}
+.hero h1{color:#fff;font-size:40px;max-width:820px;margin:0 auto}
+.hero.test{background:var(--olive-light)}
+.hero.final{background:var(--olive-dark)}
+.hero.pdf{padding:28px 24px 34px;flex:none}
+.hero.pdf::after{border-width:16px;border-top:0}
+.hero.pdf small{font-size:12px;margin-bottom:8px}
+.hero.pdf h1{font-size:28px}
+.pdfframe{background:#525659}
+
+.content{max-width:760px;margin:0 auto;padding:56px 32px 40px;font-size:17px}
+.content p{margin:0 0 18px}
+.content h3{display:table;background:var(--olive-light);color:#fff;font-size:13px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;padding:6px 18px;margin:30px 0 18px}
+.content ul{list-style:none;padding:0;margin:0 0 22px;display:grid;gap:12px}
+.content li{display:grid;grid-template-columns:22px 1fr;gap:12px;align-items:start}
+.content li::before{content:"";width:18px;height:18px;margin-top:4px;border:1.5px solid var(--pink);border-radius:50%;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.2l2.6 2.6L12 5.4' fill='none' stroke='%23BB697B' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat}
+.actions{max-width:760px;margin:0 auto;padding:8px 32px 80px;display:flex;gap:14px;flex-wrap:wrap}
+
+.q{border:1px solid var(--line);border-radius:14px;padding:24px 26px;margin-bottom:18px}
+.q-n{font-size:13px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+.q-t{font-weight:500;font-size:18px;margin-bottom:16px}
+.opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:12px 16px;margin-top:10px;color:var(--ink);font-size:16px}
+.opt:hover:not(:disabled){border-color:var(--olive-light)}
+.opt .dot{width:18px;height:18px;border-radius:50%;border:1.5px solid #B9BDC1;flex:none;display:grid;place-items:center}
+.opt.sel{border-color:var(--olive);background:var(--olive-tint)}
+.opt.sel .dot{border-color:var(--olive)}
+.opt.sel .dot::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--olive)}
+.opt:disabled{cursor:default}
+.opt.right{border-color:var(--ok);background:#E9F4EC}
+.opt.wrong{border-color:var(--red);background:#FBEBED}
+.opt .tag{margin-left:auto;font-size:13px;font-weight:600}
+.opt.right .tag{color:var(--ok)}
+.opt.wrong .tag{color:var(--red)}
+.result{border-radius:14px;padding:24px 26px;margin:6px 0 22px;background:var(--band)}
+.result b{font-size:22px;font-weight:600}
+.result p{margin:6px 0 0;color:var(--muted)}
+.big{display:flex;align-items:baseline;gap:18px;flex-wrap:wrap}
+.big .num{font-size:64px;font-weight:600;line-height:1;color:var(--olive)}
+.big .num.fail{color:var(--red)}
+
+/* вход */
+.login{min-height:100vh;display:grid;grid-template-columns:1.1fr 1fr}
+.login-art{background:var(--olive);color:#fff;padding:56px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.login-art h1{color:#fff;font-size:44px;max-width:460px;text-transform:uppercase;letter-spacing:.02em;line-height:1.1}
+.login-art p{opacity:.8;max-width:400px;margin:18px 0 0}
+.login-art .lines{position:absolute;right:-80px;bottom:-80px;width:420px;height:420px;border:1px solid rgba(255,255,255,.25);border-radius:50%}
+.login-art .lines::after{content:"";position:absolute;inset:60px;border:1px solid rgba(255,255,255,.18);border-radius:50%}
+.login-form{display:flex;align-items:center;justify-content:center;padding:48px 32px}
+.login-form form{width:100%;max-width:380px}
+.login-form h2{font-size:28px;margin-bottom:8px}
+.login-form .hint{color:var(--muted);margin:0 0 28px;font-size:15px}
+label{display:block;font-size:14px;color:var(--muted);margin-bottom:6px}
+input,select{width:100%;font:inherit;padding:13px 14px;border:1.5px solid var(--line);border-radius:10px;margin-bottom:18px;background:#fff;color:var(--ink)}
+input:focus,select:focus{outline:none;border-color:var(--olive)}
+.login-form .btn{width:100%;margin-top:6px}
+
+.content a{color:var(--olive);text-underline-offset:3px}
+.dl{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:6px 0 24px;text-decoration:none;color:var(--ink)!important;background:#fff}
+.dl:hover{border-color:var(--olive-light);background:#FAFBF7}
+.dl-i{width:36px;height:36px;border-radius:50%;background:var(--olive);color:#fff;display:grid;place-items:center;font-weight:600;flex:none}
+.dl b{display:block;font-weight:600}
+.dl small{display:block;color:var(--muted);font-size:13.5px}
+.pic{display:block;margin:6px 0 30px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+.pic img{width:100%;display:block}
+.contact{border:1px solid var(--line);border-left:3px solid var(--olive);border-radius:12px;padding:18px 22px;margin:6px 0 24px;display:flex;flex-direction:column;gap:4px}
+.contact b{font-size:18px;font-weight:600}
+.contact span{color:var(--muted);font-size:15px}
+.pageview{height:100vh;height:100dvh;display:flex;flex-direction:column}
+.pageview .viewer-top{position:static}
+.frame{flex:1;width:100%;border:0;display:block;background:#fff}
+.framebar{border-top:1px solid var(--line);background:#fff}
+.framebar .wrap{display:flex;gap:12px;padding-top:12px;padding-bottom:12px;flex-wrap:wrap}
+
+/* низ просмотра как в ИДПО */
+.vt-sub{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;flex:1;text-align:center}
+.withbar{padding-bottom:84px}
+.vbar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);z-index:6}
+.pageview .vbar{position:static}
+.vbar .wrap{max-width:none;margin:0;padding:0 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;height:76px}
+.vbar-l{display:flex;align-items:center;gap:14px;min-width:0}
+.vbar-t{font-size:18px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vbar .studied{flex:none}
+.vbar-r{display:flex;gap:10px;flex:none}
+.vprev{width:52px;height:52px;border-radius:10px;border:0;background:var(--olive-tint);color:var(--olive);display:grid;place-items:center}
+.vprev:disabled{color:#C4C7CA;background:#F1F2F3;cursor:default}
+.vnext{height:52px;border-radius:10px;border:0;background:var(--olive-dark);color:#fff;font-weight:600;font-size:15px;padding:0 18px 0 22px;display:flex;align-items:center;gap:12px}
+.vnext:hover{background:#4A5223}
+/* левая панель и содержание как в ИДПО */
+.rail{position:fixed;left:0;top:0;bottom:0;width:76px;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;gap:14px;padding-top:12px;z-index:32}
+.rb{width:48px;height:48px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--ink);display:grid;place-items:center}
+.rb:hover{background:var(--olive-tint)}
+.rb.on{background:var(--olive-tint);border-color:var(--olive-light);color:var(--olive)}
+.rring{--p:0;width:50px;height:50px;border-radius:50%;background:conic-gradient(var(--olive) calc(var(--p)*1%),#E6E8E1 0);display:grid;place-items:center}
+.rring span{width:41px;height:41px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:11px;font-weight:600;color:var(--ink)}
+.withbar,.pageview{margin-left:76px}
+.pageview{width:auto}
+.vbar{left:76px}
+.toc-wrap{position:fixed;left:76px;top:0;bottom:0;right:0;z-index:31;visibility:hidden;transition:visibility 0s linear .3s}
+.toc-wrap.open{visibility:visible;transition:none}
+.toc-panel{position:absolute;left:0;top:0;bottom:0;width:min(360px,calc(100vw - 76px));background:#F5F6F7;display:flex;flex-direction:column;box-shadow:12px 0 32px rgba(33,37,41,.10);transform:translateX(-105%);transition:transform .3s cubic-bezier(.2,.7,.2,1)}
+.toc-wrap.open .toc-panel{transform:none}
+.toc-head{display:flex;justify-content:space-between;align-items:center;padding:14px 12px 10px 20px}
+.toc-head b{font-size:13px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:var(--ink)}
+.toc-list{overflow:auto;flex:1;padding:4px 14px 24px}
+.toc-mod{background:#fff;border:1px solid var(--line);border-radius:10px;margin-bottom:12px;overflow:hidden}
+.toc-mh{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;width:100%;padding:14px 14px;border:0;background:#fff;text-align:left;font:inherit;font-size:14.5px;font-weight:600;color:var(--ink)}
+button.toc-mh{cursor:pointer}
+.toc-c{display:flex;align-items:center;gap:10px;font-weight:500;color:var(--muted);font-size:13px;white-space:nowrap;padding-top:2px}
+.toc-mod.closed .toc-rows{display:none}
+.toc-mod.closed .chev{transform:rotate(-45deg)}
+.toc-i{display:grid;grid-template-columns:20px 1fr 22px;gap:10px;align-items:center;padding:11px 14px;color:var(--ink);text-decoration:none;font-size:13.5px;line-height:1.35;border-top:1px solid var(--line);position:relative}
+.toc-i:hover{background:#FAFBF7}
+.toc-i.done::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--ok)}
+.toc-i.cur{background:var(--olive-tint);font-weight:600}
+.toc-i.off{color:#A3A7AB;cursor:default}
+.toc-ic{width:20px;height:20px;color:var(--muted);display:grid;place-items:center}
+.toc-ic svg{width:18px;height:18px}
+.toc-i .check{width:20px;height:20px}
+.toc-i .check svg{width:12px;height:12px}
+@media (max-width:700px){
+  .rail{top:0;bottom:auto;right:0;width:auto;height:56px;flex-direction:row;justify-content:space-between;padding:0 12px;border-right:0;border-bottom:1px solid var(--line)}
+  .rring{order:2}
+  .rb-toc{order:3}
+  .withbar,.pageview{margin-left:0}
+  .withbar{padding-top:56px}
+  .pageview{padding-top:56px;box-sizing:border-box}
+  .vbar{left:0}
+  .toc-wrap{left:0;top:56px}
+  .toc-panel{width:100%}
+  .vbar .wrap{height:64px;gap:10px}
+  .vbar-t{display:none}
+  .vbar-l{flex:1}
+  .vprev{width:46px;height:46px}
+  .vnext{height:46px;padding:0 12px 0 16px;font-size:14px}
+  .withbar{padding-bottom:76px}
+}
+@media (max-width:900px){.framebar .wrap{flex-wrap:nowrap;gap:8px;padding-top:10px;padding-bottom:10px}.framebar .btn{flex:1;padding:12px 8px;font-size:14px}}
+.logo{height:46px;width:auto;display:block}
+.logo-lg{height:60px}
+.content .note{border-left:3px solid var(--pink);background:var(--olive-tint);padding:16px 20px;font-weight:500}
+.video{margin:8px 0 26px;border-radius:14px;overflow:hidden;background:#000;aspect-ratio:16/9}
+.video video{width:100%;height:100%;display:block}
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:6px 0 22px}
+.nums div{border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:#fff}
+.nums b{display:block;font-size:40px;line-height:1;color:var(--olive);font-weight:600;margin-bottom:8px}
+.nums span{font-size:14px;color:var(--muted);line-height:1.4;display:block}
+.acc{border:1px solid var(--line);border-radius:12px;margin:0 0 10px;background:#fff}
+.acc>summary{list-style:none;cursor:pointer;padding:15px 52px 15px 20px;font-weight:500;position:relative}
+.acc>summary::-webkit-details-marker{display:none}
+.acc>summary::after{content:"";position:absolute;right:20px;top:50%;width:10px;height:10px;border-right:1.6px solid var(--olive);border-bottom:1.6px solid var(--olive);transform:translateY(-70%) rotate(45deg);transition:transform .2s}
+.acc[open]>summary::after{transform:translateY(-30%) rotate(-135deg)}
+.acc[open]>summary{color:var(--olive)}
+.acc-body{padding:2px 20px 8px}
+.acc+h3,.acc+p{margin-top:24px}
+.people{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px;margin:6px 0 28px}
+.person{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;display:flex;flex-direction:column}
+.person .ph{aspect-ratio:1/1;background:var(--olive-tint);overflow:hidden}
+.person .ph img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
+.pinfo{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
+.pinfo b{font-weight:600;font-size:16px;line-height:1.3}
+.pinfo span{font-size:13.5px;color:var(--muted);line-height:1.45}
+.pinfo .quote{font-size:17px;font-style:italic;color:var(--olive);margin:0 0 6px}
+.person.wide{flex-direction:row;margin:8px 0 26px}
+.person.wide .ph{width:200px;flex:none;aspect-ratio:auto;min-height:220px}
+.person.wide .pinfo{padding:22px 24px;justify-content:center}
+.person.wide .pinfo b{font-size:20px}
+.person.wide .pinfo span{font-size:15px}
+.more{margin-top:auto;padding-top:8px}
+.more>summary{cursor:pointer;color:var(--olive);font-size:14px;font-weight:600;list-style:none}
+.more>summary::-webkit-details-marker{display:none}
+.more>summary::after{content:" +"}
+.more[open]>summary::after{content:" −"}
+.more-body{font-size:14px;margin-top:8px}
+.more-body h3{font-size:11px;padding:4px 10px;margin:14px 0 10px}
+.more-body ul{gap:8px}
+.more-body li{grid-template-columns:16px 1fr;gap:8px}
+.more-body li::before{width:14px;height:14px;background-size:9px;margin-top:3px}
+.people .person:has(.more[open]){grid-column:1/-1;flex-direction:row}
+.people .person:has(.more[open]) .ph{width:220px;flex:none;aspect-ratio:auto;max-height:280px}
+@media (max-width:600px){.people .person:has(.more[open]){flex-direction:column}.people .person:has(.more[open]) .ph{width:100%;aspect-ratio:4/3;max-height:none}}
+
+@media (max-width:900px){
+  .logo{height:38px}
+  .logo-lg{height:38px}
+  .person.wide{flex-direction:column}
+  .person.wide .ph{width:100%;aspect-ratio:4/3;min-height:0}
+  .people{grid-template-columns:1fr 1fr;gap:12px}
+  .pinfo{padding:12px}
+  .pinfo b{font-size:14.5px}
+  .pinfo span{font-size:12.5px}
+  .nums b{font-size:32px}
+  .main{grid-template-columns:1fr;gap:32px;padding:28px 16px 64px}
+  .card{position:static;order:-1}
+  .wrap{padding:0 16px}
+  h1{font-size:26px}
+  .pct{font-size:28px;min-width:70px}
+  .counters{gap:22px 28px;margin-bottom:36px}
+  .row{grid-template-columns:26px 1fr 24px;padding:16px;gap:12px}
+  .row .kind{display:none}
+  .rw .row,.mod-hw .mod-h{padding-right:52px}
+  .fav{right:8px}
+  .pform{grid-template-columns:1fr}
+  .profile2{grid-template-columns:1fr!important}
+  .stats{grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .stat{padding:14px 6px}
+  .stat b{font-size:20px}
+  .stat span{font-size:11.5px}
+  .sphoto{flex-direction:column;text-align:center}
+  .unm{display:none}
+  .dropdown{width:260px}
+  .pcard{padding:20px 16px}
+  .rtable{font-size:14px}
+  .rtable th:nth-child(3),.rtable td.dt{display:none}
+  .row .ttl small{display:block;color:var(--muted);font-size:13px}
+  .mod-h{padding:14px 16px}
+  .hero{padding:44px 16px 54px}
+  .hero h1{font-size:28px}
+  .content{padding:36px 16px 24px;font-size:16px}
+  .actions{padding:4px 16px 56px}
+  .actions .btn{width:100%}
+  .q{padding:18px 16px}
+  .login{grid-template-columns:1fr}
+  .login-art{padding:36px 20px 44px;min-height:auto}
+  .login-art h1{font-size:30px}
+  .brand small,.user .nm{display:none}
+  .titlerow .btn{width:100%}
+  .tabs{gap:24px}
+  .vnav .lbl{display:none}
+  .big .num{font-size:48px}
+}
+@media (min-width:901px){ .row .ttl small{display:none} }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script src="данные.js"></script>
+<script>
+(function(){
+const K = window.КУРС;
+const app = document.getElementById('app');
+const KEY_USER = 'ецп-адаптация:пользователь';
+const keyProg = u => 'ецп-адаптация:прогресс:' + u.фио + '|' + u.отдел;
+
+// ---------- хранение ----------
+function load(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; } }
+function save(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+let user = load(KEY_USER, null);
+let prog = user ? load(keyProg(user), {}) : {};
+function saveProg(){ if(user) save(keyProg(user), prog); }
+
+// ---------- шаги курса ----------
+// модуль со строкой "отделы" видят только сотрудники этих отделов
+const modVisible = m => !m.отделы || !!(user && m.отделы.includes(user.отдел));
+// номер «Модуль N.» считается по видимым модулям сотрудника
+function modName(mi){
+  const m = K.модули[mi], re = /^Модуль\s+\d+\.\s*/;
+  if(!re.test(m.название)) return m.название;
+  let n = 0;
+  for(let i = 0; i <= mi; i++) if(modVisible(K.модули[i]) && re.test(K.модули[i].название)) n++;
+  return 'Модуль ' + n + '. ' + m.название.replace(re, '');
+}
+const testName = t => 'Тест: ' + (t.раздел || t.название);
+// Группирует строки модуля по подтемам (поле раздел). Без подтем возвращает строки как есть.
+function withSections(mi, items, stepOf, rowHtml, isActive, cls){
+  const темы = K.модули[mi].темы;
+  if(!темы.some(t=>t.раздел)) return items.map(rowHtml).join('');
+  const groups = [];
+  items.forEach(it => {
+    const name = темы[stepOf(it).ti].раздел || '';
+    if(!groups.length || groups[groups.length-1].name !== name) groups.push({name, items:[]});
+    groups[groups.length-1].items.push(it);
+  });
+  const state = prog.разделы || {};
+  return groups.map((g, gi) => {
+    const key = mi + ':' + gi;
+    const done = g.items.filter(it=>isDone(stepOf(it))).length;
+    const closed = state[key]===undefined ? !g.items.some(isActive) : state[key];
+    return `<div class="${cls}${closed?' closed':''}"><button class="sec-h" data-act="sec" data-key="${key}" aria-expanded="${!closed}"><span class="sec-t">${esc(g.name)}</span><span class="sec-c">${done} / ${g.items.length}<i class="chev"></i></span></button><div class="sec-rows">${g.items.map(rowHtml).join('')}</div></div>`;
+  }).join('');
+}
+const steps = [];
+function buildSteps(){
+  steps.length = 0;
+  K.модули.forEach((m, mi) => { if(modVisible(m)) m.темы.forEach((t, ti) => {
+    steps.push({type:'m', mi, ti, id:'m:'+mi+':'+ti});
+    if(t.тест && t.тест.length) steps.push({type:'q', mi, ti, id:'q:'+mi+':'+ti});
+  }); });
+}
+buildSteps();
+const isDone = s => !!prog[s.id];
+const unlocked = i => true; // модули и темы не блокируются
+const allDone = () => steps.every(isDone);
+const nextIndex = () => steps.findIndex(s => !isDone(s));
+
+// ---------- иконки ----------
+const I = {
+  doc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>',
+  test:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 11l2 2 4-4M9 17h6"/></svg>',
+  final:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 9l9-5 9 5-9 5z"/><path d="M7 11.5V16c0 1.5 2.2 3 5 3s5-1.5 5-3v-4.5M21 9v6"/></svg>',
+  check:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.4l3 3L12.5 5"/></svg>',
+  lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
+  star:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3.6l2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-2.9-5.3 2.9 1.1-6L3.4 9.9l6-.8z"/></svg>',
+  list:'<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><circle cx="4.5" cy="6" r="1.6"/><circle cx="4.5" cy="12" r="1.6"/><circle cx="4.5" cy="18" r="1.6"/><rect x="8" y="4.7" width="13" height="2.6" rx="1.3"/><rect x="8" y="10.7" width="13" height="2.6" rx="1.3"/><rect x="8" y="16.7" width="13" height="2.6" rx="1.3"/></svg>',
+  chevL:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
+  chevR:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>',
+  x:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  left:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M13.5 8.5L10 12l3.5 3.5"/></svg>',
+  right:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M10.5 8.5L14 12l-3.5 3.5"/></svg>'
+};
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const linkify = t => {
+  const links = [];
+  let h = esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+  h = h.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, txt, url) => { links.push(`<a href="${url}"${/^https?:/.test(url)?' target="_blank" rel="noopener"':''}>${txt}</a>`); return `\u0000${links.length-1}\u0000`; });
+  h = h.replace(/https?:\/\/[^\s<\u0000]+[^\s<.,;:!?)»\u0000]/g, u => `<a href="${u}" target="_blank" rel="noopener">${u}</a>`);
+  return h.replace(/\u0000(\d+)\u0000/g, (m, i) => links[+i]);
+};
+const initials = n => n.trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+
+function personCard(o, wide){
+  const more = o.подробнее && o.подробнее.length
+    ? `<details class="more"><summary>Узнать больше</summary><div class="more-body">${renderText(o.подробнее)}</div></details>` : '';
+  return `<div class="person${wide?' wide':''}">
+    ${o.фото?`<div class="ph"><img src="${esc(o.фото)}" alt="${esc(o.человек)}" loading="lazy"></div>`:''}
+    <div class="pinfo">
+      ${o.цитата?`<p class="quote">${esc(o.цитата)}</p>`:''}
+      <b>${esc(o.человек)}</b>
+      ${o.должность?`<span>${esc(o.должность)}</span>`:''}
+      ${more}
+    </div>
+  </div>`;
+}
+function renderText(lines){
+  let html = '', inList = false;
+  (lines||[]).forEach(l => {
+    if(l && typeof l === 'object'){
+      if(inList){ html += '</ul>'; inList = false; }
+      if(l.видео) html += `<div class="video"><video controls preload="metadata" playsinline src="${esc(l.видео)}"></video></div>`;
+      else if(l.файл) html += `<a class="dl" href="${esc(l.файл)}" download><span class="dl-i">↓</span><span><b>${esc(l.текст||'Скачать')}</b>${l.подпись?`<small>${esc(l.подпись)}</small>`:''}</span></a>`;
+      else if(l.картинка) html += `<a class="pic" href="${esc(l.картинка)}" target="_blank" rel="noopener"><img src="${esc(l.картинка)}" alt="" loading="lazy"></a>`;
+      else if(l.человек && !l.фото) html += `<div class="contact"><b>${esc(l.человек)}</b>${l.должность?`<span>${esc(l.должность)}</span>`:''}</div>`;
+      else if(l.человек) html += personCard(l, true);
+      else if(l.люди) html += `<div class="people">${l.люди.map(p=>personCard(p)).join('')}</div>`;
+      else if(l.раскрыть) html += `<details class="acc"><summary>${esc(l.раскрыть)}</summary><div class="acc-body">${renderText(l.текст)}</div></details>`;
+      else if(l.цифры) html += `<div class="nums">${l.цифры.map(n=>`<div><b>${esc(n[0])}</b><span>${esc(n[1])}</span></div>`).join('')}</div>`;
+      return;
+    }
+    l = String(l);
+    if(l.startsWith('- ')){ if(!inList){ html += '<ul>'; inList = true; } html += '<li><span>'+linkify(l.slice(2))+'</span></li>'; return; }
+    if(inList){ html += '</ul>'; inList = false; }
+    if(l.startsWith('## ')) html += '<h3>'+esc(l.slice(3))+'</h3>';
+    else if(l.startsWith('> ')) html += '<p class="note">'+linkify(l.slice(2))+'</p>';
+    else html += '<p>'+linkify(l)+'</p>';
+  });
+  if(inList) html += '</ul>';
+  return html;
+}
+
+// ---------- баллы ----------
+function scores(){
+  let got = 0, max = 0, testsDone = 0;
+  steps.filter(s => s.type==='q').forEach(s => {
+    max += K.модули[s.mi].темы[s.ti].тест.length;
+    if(prog[s.id]){ got += prog[s.id].score; testsDone++; }
+  });
+  const fq = K.итоговый_тест.вопросы.length;
+  max += fq;
+  if(prog.final){ got += prog.final.score; }
+  return {got, max, testsDone, testsTotal: steps.filter(s=>s.type==='q').length + 1, finalDone: !!prog.final};
+}
+
+// ---------- шапка ----------
+function avatarHtml(cls){
+  return user.фото ? `<span class="${cls} has-photo"><img src="${user.фото}" alt=""></span>` : `<span class="${cls}">${esc(initials(user.фио))}</span>`;
+}
+function header(){
+  return `<header class="top"><div class="wrap">
+    <a class="brand" href="#/"><img class="logo" src="img/logo-white.svg" alt="Единый центр"></a>
+    <div class="umenu">
+      <button class="user" data-act="menu" aria-haspopup="true" aria-expanded="false"><span class="unm"><span class="nm">${esc(user.фио)}</span><small>${esc(user.отдел)}</small></span>${avatarHtml('avatar')}</button>
+      <div class="dropdown" role="menu">
+        <div class="dd-head">${avatarHtml('avatar avatar-dd')}<div><b>${esc(user.фио)}</b><small>${esc(user.отдел)}${user.должность?', '+esc(user.должность):''}</small></div></div>
+        <a href="#/profile" role="menuitem">Профиль</a>
+        <a href="#/settings" role="menuitem">Настройки</a>
+        <button data-act="logout" role="menuitem">Выйти</button>
+      </div>
+    </div>
+  </div></header>`;
+}
+
+// ---------- профиль ----------
+const fmtDate = d => { if(!d) return ''; const x = new Date(d); return isNaN(x) ? '' : x.toLocaleDateString('ru-RU', {day:'numeric', month:'long', year:'numeric'}); };
+const stamp = () => new Date().toISOString();
+function pageHead(title, crumb){
+  return `<div class="band"><div class="wrap">
+    <div class="crumbs"><a href="#/">Моё обучение</a> › ${esc(crumb)}</div>
+    <div class="titlerow"><h1>${esc(title)}</h1></div>
+    <div class="tabs"><a class="tab ${crumb==='Профиль'?'on':''}" href="#/profile">Мой профиль</a><a class="tab ${crumb==='Настройки'?'on':''}" href="#/settings">Настройки</a></div>
+  </div></div>`;
+}
+function viewProfile(){
+  const sc = scores();
+  const thr = K.итоговый_тест.проходной_балл;
+  const fr = prog.final;
+  const matTotal = steps.filter(s=>s.type==='m').length, matDone = steps.filter(s=>s.type==='m'&&isDone(s)).length;
+  const qs = steps.filter(s=>s.type==='q'&&prog[s.id]);
+  const avg = qs.length || fr ? Math.round(([...qs.map(s=>prog[s.id].score/prog[s.id].max)].concat(fr?[fr.score/fr.max]:[]).reduce((a,b)=>a+b,0)) / (qs.length + (fr?1:0)) * 100) : 0;
+  let res = '';
+  K.модули.forEach((m, mi) => {
+    if(!modVisible(m)) return;
+    const rows = m.темы.map((t, ti) => {
+      const mat = prog['m:'+mi+':'+ti], q = prog['q:'+mi+':'+ti];
+      const hasTest = t.тест && t.тест.length;
+      const status = hasTest ? (q ? `${q.score} из ${q.max}` : 'не пройден') : (mat ? 'изучено' : 'не изучено');
+      const date = hasTest ? (q && q.date) : (typeof mat === 'string' ? mat : '');
+      const ok = hasTest ? !!q : !!mat;
+      if(t.раздел && hasTest){
+        const mOk = !!mat, mDate = typeof mat === 'string' ? mat : '';
+        return `<tr><td><a href="#/m/${mi}/${ti}">${esc(t.название)}</a></td><td class="${mOk?'ok':'no'}">${mOk?'изучено':'не изучено'}</td><td class="dt">${fmtDate(mDate)}</td></tr><tr><td><a href="#/q/${mi}/${ti}">${esc(testName(t))}</a></td><td class="${ok?'ok':'no'}">Тест: ${status}</td><td class="dt">${fmtDate(date)}</td></tr>`;
+      }
+      return `<tr><td><a href="#/m/${mi}/${ti}">${esc(t.название)}</a></td><td class="${ok?'ok':'no'}">${hasTest?'Тест: ':''}${status}</td><td class="dt">${fmtDate(date)}</td></tr>`;
+    }).join('');
+    res += `<tr class="grp"><td colspan="3">${esc(modName(mi))}</td></tr>${rows}`;
+  });
+  res += `<tr class="grp"><td colspan="3">Заключение</td></tr><tr><td>Итоговый тест</td><td class="${fr?(fr.passed?'ok':'bad'):'no'}">${fr ? `${fr.pct}%, ${fr.passed?'пройден':'не пройден'}` : (allDone()?'открыт':'закрыт')}</td><td class="dt">${fmtDate(fr && fr.date)}</td></tr>`;
+
+  app.innerHTML = header() + pageHead('Мой профиль', 'Профиль') + `
+  <div class="main profile2">
+    <aside class="pside">
+      ${avatarHtml('avatar avatar-xl')}
+      <b class="pname">${esc(user.фио)}</b>
+      <span class="pmeta">${esc(user.отдел)}${user.должность?'<br>'+esc(user.должность):''}</span>
+      ${user.дата_выхода?`<span class="pmeta">Дата выхода: ${fmtDate(user.дата_выхода)}</span>`:''}
+      <a class="btn" href="#/settings">Настройки</a>
+    </aside>
+    <div>
+      <div class="stats">
+        <div class="stat"><b>${matDone} / ${matTotal}</b><span>Изучено тем</span></div>
+        <div class="stat"><b>${avg}%</b><span>Средний процент успешности</span></div>
+        <div class="stat"><b>${fr ? fr.pct+'%' : 'нет'}</b><span>Итоговый тест${fr?(fr.passed?', пройден':', не пройден'):''} · порог ${thr}%</span></div>
+      </div>
+      <section class="pcard">
+        <h2>Мои результаты</h2>
+        <table class="rtable"><thead><tr><th>Тема</th><th>Результат</th><th>Дата</th></tr></thead><tbody>${res}</tbody></table>
+      </section>
+    </div>
+  </div>`;
+}
+
+function resizePhoto(file, cb){
+  const r = new FileReader();
+  r.onload = () => { const img = new Image(); img.onload = () => {
+    const S = 240, c = document.createElement('canvas'); c.width = c.height = S;
+    const k = Math.max(S/img.width, S/img.height), w = img.width*k, h = img.height*k;
+    c.getContext('2d').drawImage(img, (S-w)/2, (S-h)/2, w, h);
+    cb(c.toDataURL('image/jpeg', .85));
+  }; img.src = r.result; };
+  r.readAsDataURL(file);
+}
+function saveUser(nu){
+  const oldKey = keyProg(user), newKey = keyProg(nu);
+  if(oldKey !== newKey){ save(newKey, prog); try{ localStorage.removeItem(oldKey); }catch(err){} }
+  user = nu; save(KEY_USER, user);
+}
+let editing = '';
+function viewSettings(){
+  const row = (label, value, empty) => `<div class="srow"><span class="slabel">${label}</span><span class="${value?'':'sempty'}">${value?esc(value):empty}</span></div>`;
+  const infoCard = editing==='info'
+    ? `<form class="pcard sform" data-form="info">
+        <div class="shead"><h2>Основная информация</h2></div>
+        <label for="s-fio">ФИО</label><input id="s-fio" required value="${esc(user.фио)}">
+        <label for="s-about">Информация о себе</label><textarea id="s-about" rows="3">${esc(user.о_себе||'')}</textarea>
+        <div class="pform-act"><button class="btn" type="submit">Сохранить</button><button class="btn ghost" type="button" data-act="cancel">Отмена</button></div>
+      </form>`
+    : `<section class="pcard">
+        <div class="sphoto">
+          <label class="upload">${avatarHtml('avatar avatar-xl')}<span>Загрузить</span><input type="file" accept="image/*" id="s-photo" hidden></label>
+          <div><b class="pname">${esc(user.фио)}</b><p class="pabout">${user.о_себе?esc(user.о_себе):'Информация о себе не указана.'}</p><button class="slink" data-act="edit" data-what="info">Изменить</button>${user.фото?` <button class="slink" data-act="rmphoto">Удалить фото</button>`:''}</div>
+        </div>
+      </section>`;
+  const workCard = editing==='work'
+    ? `<form class="pcard sform" data-form="work">
+        <div class="shead"><h2>Данные сотрудника</h2></div>
+        <label for="s-dep">Отдел</label><select id="s-dep">${K.отделы.map(o=>`<option${o===user.отдел?' selected':''}>${esc(o)}</option>`).join('')}${K.отделы.includes(user.отдел)?'':`<option selected>${esc(user.отдел)}</option>`}</select>
+        <label for="s-pos">Должность</label><input id="s-pos" value="${esc(user.должность||'')}">
+        <label for="s-start">Дата выхода на работу</label><input id="s-start" type="date" value="${esc(user.дата_выхода||'')}">
+        <div class="pform-act"><button class="btn" type="submit">Сохранить</button><button class="btn ghost" type="button" data-act="cancel">Отмена</button></div>
+      </form>`
+    : `<section class="pcard">
+        <div class="shead"><h2>Данные сотрудника</h2><button class="slink" data-act="edit" data-what="work">Изменить</button></div>
+        ${row('Отдел', user.отдел, 'Не указан')}
+        ${row('Должность', user.должность, 'Не указана')}
+        ${row('Дата выхода на работу', fmtDate(user.дата_выхода), 'Не указана')}
+      </section>`;
+
+  app.innerHTML = header() + pageHead('Настройки', 'Настройки') + `
+  <div class="main settings">
+    <div>
+      ${infoCard}
+      ${workCard}
+      <section class="pcard">
+        <div class="shead"><h2>Обучение</h2></div>
+        <div class="srow"><span>Сбросить прогресс и результаты всех тестов и пройти курс заново.</span><button class="slink danger" data-act="reset">Начать курс заново</button></div>
+      </section>
+      <section class="pcard">
+        <button class="slink" data-act="logout">Выйти из аккаунта</button>
+      </section>
+    </div>
+  </div>`;
+
+  const ph = document.getElementById('s-photo');
+  if(ph) ph.onchange = () => { const f = ph.files[0]; if(f) resizePhoto(f, url => { saveUser(Object.assign({}, user, {фото:url})); viewSettings(); }); };
+  app.querySelectorAll('form[data-form]').forEach(f => f.onsubmit = e => {
+    e.preventDefault();
+    const nu = Object.assign({}, user);
+    if(f.dataset.form==='info'){ nu.фио = document.getElementById('s-fio').value.trim() || user.фио; nu.о_себе = document.getElementById('s-about').value.trim(); }
+    else { nu.отдел = document.getElementById('s-dep').value; nu.должность = document.getElementById('s-pos').value.trim(); nu.дата_выхода = document.getElementById('s-start').value; }
+    saveUser(nu); editing = ''; viewSettings();
+  });
+}
+
+// ---------- вход ----------
+function viewLogin(){
+  app.innerHTML = `<div class="login">
+    <div class="login-art"><div class="lines"></div>
+      <div class="brand"><img class="logo logo-lg" src="img/logo-white.svg" alt="Единый центр. Защитники Отечества"></div>
+      <div><h1>${esc(K.название)}</h1><p>Модули по порядку, тест после каждой темы и итоговый тест в конце.</p></div>
+    </div>
+    <div class="login-form"><form id="f">
+      <h2>Вход</h2>
+      <p class="hint">Прогресс сохраняется для каждого сотрудника отдельно.</p>
+      <label for="fio">ФИО</label>
+      <input id="fio" required autocomplete="name" placeholder="Фамилия Имя Отчество">
+      <label for="dep">Отдел</label>
+      <select id="dep" required><option value="" disabled selected>Выберите отдел</option>${K.отделы.map(o=>`<option>${esc(o)}</option>`).join('')}</select>
+      <button class="btn" type="submit">Войти</button>
+    </form></div>
+  </div>`;
+  document.getElementById('f').onsubmit = e => {
+    e.preventDefault();
+    const фио = document.getElementById('fio').value.trim();
+    const отдел = document.getElementById('dep').value;
+    if(!фио || !отдел) return;
+    user = {фио, отдел}; save(KEY_USER, user);
+    prog = load(keyProg(user), {});
+    location.hash = '#/'; route();
+  };
+}
+
+// ---------- главная курса ----------
+// ---------- избранное ----------
+const favKeyM = m => 'м|' + m.название.replace(/^Модуль\s*\d+\.\s*/, '');
+const favKeyT = t => 'т|' + t.название;
+const isFav = key => !!(prog.избранное||{})[key];
+function favBtn(key, label, cls){
+  const on = isFav(key);
+  return `<button class="${cls||'fav'}${on?' on':''}" data-act="fav" data-key="${esc(key)}" aria-pressed="${on}" aria-label="${on?'Убрать из избранного':'Добавить в избранное'}: ${esc(label)}" title="${on?'Убрать из избранного':'Добавить в избранное'}">${I.star}</button>`;
+}
+function courseRow(m, {s,i}, ni){
+  const t = m.темы[s.ti];
+  const open = unlocked(i);
+  const kind = s.type==='m' ? 'Материал' : 'Тест';
+  const extra = s.type==='q' && prog[s.id] ? ` · ${prog[s.id].score} / ${prog[s.id].max}` : '';
+  return `<div class="rw"><button class="row${i===ni?' next':''}" ${open?'':'disabled'} data-go="${s.type}/${s.mi}/${s.ti}">
+    <span class="ic">${s.type==='m'?I.doc:I.test}</span>
+    <span class="ttl">${esc(s.type==='q'?testName(t):t.название)}<small>${kind}${extra}</small></span>
+    <span class="kind">${kind}${extra}</span>
+    <span>${isDone(s)?`<span class="check">${I.check}</span>`:open?'':`<span class="lock">${I.lock}</span>`}</span>
+  </button>${s.type==='m'?favBtn(favKeyT(t), t.название):''}</div>`;
+}
+function moduleCard(m, mi, ni, openByDefault){
+  const ms = steps.map((s,i)=>({s,i})).filter(o=>o.s.mi===mi);
+  const md = ms.filter(o=>isDone(o.s)).length;
+  const rows = withSections(mi, ms, o=>o.s, o=>courseRow(m,o,ni), o=>o.i===ni, 'sec');
+  const coll = (prog.свернуто||{})[mi];
+  const closed = coll===undefined ? (openByDefault ? false : !ms.some(o=>o.i===ni)) : coll;
+  return `<section class="mod${closed?' closed':''}"><div class="mod-hw"><button class="mod-h" data-act="toggle" data-mi="${mi}" aria-expanded="${!closed}"><span class="mod-t">${esc(modName(mi))}</span><span class="mod-c">${md} / ${ms.length}<i class="chev"></i></span></button>${favBtn(favKeyM(m), modName(mi))}</div><div class="mod-rows">${rows}</div></section>`;
+}
+function favoritesData(ni){
+  let mods = '', topics = '', n = 0;
+  K.модули.forEach((m, mi) => {
+    if(!modVisible(m)) return;
+    if(isFav(favKeyM(m))){ mods += moduleCard(m, mi, ni, true); n++; }
+    m.темы.forEach((t, ti) => {
+      if(!isFav(favKeyT(t))) return;
+      n++;
+      steps.forEach((s, i) => { if(s.mi===mi && s.ti===ti && (s.type==='m' || !t.раздел)) topics += courseRow(m, {s,i}, ni); });
+    });
+  });
+  return {mods, topics, n};
+}
+function favoritesHtml(ni){
+  const f = favoritesData(ni);
+  if(!f.n) return `<div class="fav-empty">${I.star}<h2>В избранном пока пусто</h2><p>Нажмите на звёздочку у модуля или темы, и они появятся здесь.</p></div>`;
+  return (f.mods ? `<p class="sub">Модули</p>${f.mods}` : '') + (f.topics ? `<p class="sub">Темы</p><section class="mod">${f.topics}</section>` : '');
+}
+
+function viewCourse(tab){
+  const doneCount = steps.filter(isDone).length + (prog.final ? 1 : 0);
+  const total = steps.length + 1;
+  const pct = Math.round(doneCount / total * 100);
+  const matTotal = steps.filter(s=>s.type==='m').length, matDone = steps.filter(s=>s.type==='m'&&isDone(s)).length;
+  const sc = scores();
+  const thr = K.итоговый_тест.проходной_балл;
+  const ni = nextIndex();
+
+  let mods = '';
+  K.модули.forEach((m, mi) => { if(modVisible(m)) mods += moduleCard(m, mi, ni, false); });
+  const fOpen = allDone();
+  const fr = prog.final;
+  mods += `<section class="mod"><div class="mod-h">Заключение<span class="mod-c">${fr?1:0} / 1</span></div>
+    <button class="row${fOpen&&!fr?' next':''}" ${fOpen?'':'disabled'} data-go="final">
+      <span class="ic">${I.final}</span>
+      <span class="ttl">Итоговый тест<small>${fOpen?'Тест':'Откроется после всех модулей'}${fr?` · ${fr.pct}%`:''}</small></span>
+      <span class="kind">${fr?fr.pct+'%':'Тест'}</span>
+      <span>${fr?`<span class="check" style="${fr.passed?'':'background:var(--red)'}">${fr.passed?I.check:I.x.replace('width="20" height="20"','width="12" height="12"')}</span>`:fOpen?'':`<span class="lock">${I.lock}</span>`}</span>
+    </button></section>`;
+
+  const favN = favoritesData(ni).n;
+  const contLabel = doneCount===0 ? 'Начать' : (ni===-1 && !fr ? 'К итоговому тесту' : (ni===-1 ? 'Результат' : 'Продолжить'));
+
+  app.innerHTML = header() + `
+  <div class="band"><div class="wrap">
+    <div class="crumbs">Моё обучение › ${esc(K.название)}</div>
+    <div class="titlerow"><h1>${esc(K.название)}</h1><button class="btn" data-act="continue">${contLabel}</button></div>
+    <div class="tabs"><button class="tab ${!tab?'on':''}" data-tab="">Содержание</button><button class="tab ${tab==='favorites'?'on':''}" data-tab="favorites">Избранное${favN?`<span class="tabn">${favN}</span>`:''}</button><button class="tab ${tab==='about'?'on':''}" data-tab="about">О курсе</button></div>
+  </div></div>
+  ${tab==='about' ? `<div class="main"><div class="about">${renderText(K.о_курсе)}</div></div>` : tab==='favorites' ? `<div class="main one"><div>${favoritesHtml(ni)}</div></div>` : `
+  <div class="main">
+    <div>
+      <h2>Прогресс</h2>
+      <div class="bar"><div class="track"><div class="fill" style="width:${pct}%"></div></div><div class="pct">${pct}%</div></div>
+      <div class="counters">
+        <div class="counter"><div class="ring" style="--p:${matDone/matTotal*100}">${I.doc}</div><div><small>Материалы</small><b>${matDone} / ${matTotal}</b></div></div>
+        <div class="counter"><div class="ring" style="--p:${sc.testsDone/(sc.testsTotal-1)*100}">${I.test}</div><div><small>Тесты по темам</small><b>${sc.testsDone} / ${sc.testsTotal-1}</b></div></div>
+        <div class="counter"><div class="ring" style="--p:${fr?100:0}">${I.final}</div><div><small>Итоговый тест</small><b>${fr?1:0} / 1</b></div></div>
+      </div>
+      <p class="sub">Содержание курса</p>
+      ${mods}
+    </div>
+    <aside class="card">
+      <h3>${fr ? (fr.passed ? 'Курс пройден' : 'Итоговый тест не сдан') : 'Курс на изучении'}</h3>
+      <div class="kv"><span>Вы набрали баллов</span><b>${sc.got} <em>(${sc.max?Math.round(sc.got/sc.max*100):0}%)</em></b></div>
+      <div class="kv"><span>Проходной балл итогового теста</span><b>${thr}%</b></div>
+      <hr>
+      <div class="kv"><span>Тестов по темам</span><b>${sc.testsDone} / ${sc.testsTotal-1}</b></div>
+      <div class="kv"><span>Итоговый тест</span><b>${fr ? fr.pct+'%' : (fOpen?'открыт':'закрыт')}</b></div>
+      ${fr ? `<span class="badge ${fr.passed?'pass':'fail'}">${fr.passed?'Пройден':'Не пройден'}</span>` : ''}
+    </aside>
+  </div>`}`;
+}
+
+// ---------- верх и низ просмотра ----------
+function tocHtml(curId){
+  let h = '';
+  const tocState = prog.содержание || {};
+  K.модули.forEach((m, mi) => {
+    if(!modVisible(m)) return;
+    const ms = steps.filter(s=>s.mi===mi);
+    const md = ms.filter(isDone).length;
+    const hasCur = ms.some(s=>s.id===curId);
+    const closed = tocState[mi]===undefined ? !hasCur : tocState[mi];
+    const tocRow = s => {
+      const t = m.темы[s.ti];
+      const label = s.type==='q' ? testName(t) : t.название;
+      return `<a class="toc-i${s.id===curId?' cur':''}${isDone(s)?' done':''}" href="#/${s.type}/${s.mi}/${s.ti}"><span class="toc-ic">${s.type==='q'?I.test:I.doc}</span><span class="toc-n">${esc(label)}</span>${isDone(s)?`<span class="check">${I.check}</span>`:''}</a>`;
+    };
+    const rows = withSections(mi, ms, s=>s, tocRow, s=>s.id===curId, 'sec toc-sec');
+    h += `<section class="toc-mod${closed?' closed':''}"><button class="toc-mh" data-act="tocmod" data-mi="${mi}"><span>${esc(modName(mi))}</span><span class="toc-c">${md}/${ms.length}<i class="chev"></i></span></button><div class="toc-rows">${rows}</div></section>`;
+  });
+  const fOpen = allDone();
+  h += `<section class="toc-mod"><div class="toc-mh"><span>Заключение</span><span class="toc-c">${prog.final?1:0}/1</span></div><div class="toc-rows"><a class="toc-i${curId==='final'?' cur':''}${fOpen?'':' off'}${prog.final?' done':''}" ${fOpen?'href="#/final"':''}><span class="toc-ic">${fOpen?I.final:I.lock}</span><span class="toc-n">Итоговый тест</span>${prog.final?`<span class="check">${I.check}</span>`:''}</a></div></section>`;
+  return h;
+}
+function coursePct(){ return Math.round((steps.filter(isDone).length + (prog.final?1:0)) / (steps.length+1) * 100); }
+function viewerTop(sub, curId){
+  const pct = coursePct();
+  return `<nav class="rail">
+    <button class="rb" data-href="#/" title="К содержанию курса" aria-label="К содержанию курса">${I.x}</button>
+    <span class="rring" style="--p:${pct}" title="Пройдено ${pct}%"><span>${pct}%</span></span>
+    <button class="rb rb-toc" data-act="toc" title="Содержание" aria-label="Содержание">${I.list}</button>
+  </nav>
+  <div class="toc-wrap" data-act="tocclose"><aside class="toc-panel" role="dialog" aria-label="Содержание курса">
+    <div class="toc-head"><b>Содержание курса</b><button class="x" data-act="tocclose" aria-label="Закрыть">${I.x}</button></div>
+    <div class="toc-list">${tocHtml(curId)}</div>
+  </aside></div>`;
+}
+function viewerBottom(done, title, prevHash, nextBtn, favKey){
+  return `<div class="vbar"><div class="wrap">
+    <div class="vbar-l">${done?`<span class="studied">${I.check}Изучено</span>`:''}<span class="vbar-t">${esc(title)}</span>${favKey?favBtn(favKey, title, 'vfav'):''}</div>
+    <div class="vbar-r">
+      <button class="vprev" ${prevHash?`data-href="${prevHash}"`:'disabled'} aria-label="Назад">${I.chevL}</button>
+      ${nextBtn}
+    </div>
+  </div></div>`;
+}
+const nextBtnHtml = (attrs, label) => `<button class="vnext" ${attrs}>${label||'Следующий материал'}${I.chevR}</button>`;
+const hashOf = i => i < 0 ? null : i >= steps.length ? (allDone() ? '#/final' : null) : (unlocked(i) ? `#/${steps[i].type}/${steps[i].mi}/${steps[i].ti}` : null);
+
+// ---------- материал ----------
+function viewMaterial(mi, ti){
+  const i = steps.findIndex(s=>s.type==='m'&&s.mi===mi&&s.ti===ti);
+  if(i<0 || !unlocked(i)){ location.hash = '#/'; return; }
+  const m = K.модули[mi], t = m.темы[ti], s = steps[i];
+  const nh = hashOf(i+1);
+  const next = nh ? nextBtnHtml(`data-act="studied" data-i="${i}"`) : nextBtnHtml(`data-act="studied" data-i="${i}"`, 'Изучено');
+  const bottom = viewerBottom(isDone(s), t.название, hashOf(i-1), next, favKeyT(t));
+  if(t.страница){
+    const pdf = /\.pdf$/i.test(t.страница);
+    app.innerHTML = `<div class="pageview">` + viewerTop(modName(mi), s.id) + `
+      ${pdf?`<div class="hero pdf"><small>${esc(modName(mi))}</small><h1>${esc(t.название)}</h1></div>`:''}
+      <iframe class="frame${pdf?' pdfframe':''}" src="${esc(t.страница)}${pdf?'#navpanes=0&view=FitH':''}" title="${esc(t.название)}"></iframe>` + bottom + `</div>`;
+    window.scrollTo(0,0);
+    return;
+  }
+  app.innerHTML = `<div class="withbar">` + viewerTop(modName(mi), s.id) + `
+    <div class="hero"><small>${esc(modName(mi))}</small><h1>${esc(t.название)}</h1></div>
+    <div class="content">${renderText(t.материал)}</div></div>` + bottom;
+  window.scrollTo(0,0);
+}
+
+// ---------- тест ----------
+let answers = {}, checked = false;
+function viewTest(kind, mi, ti){
+  let qs, title, small, i = -1, heroCls;
+  if(kind==='final'){
+    if(!allDone()){ location.hash = '#/'; return; }
+    qs = K.итоговый_тест.вопросы; title = 'Итоговый тест'; small = 'Заключение'; heroCls = 'final';
+  } else {
+    i = steps.findIndex(s=>s.type==='q'&&s.mi===mi&&s.ti===ti);
+    if(i<0 || !unlocked(i)){ location.hash = '#/'; return; }
+    qs = K.модули[mi].темы[ti].тест; title = testName(K.модули[mi].темы[ti]); small = modName(mi); heroCls = 'test';
+  }
+  const thr = K.итоговый_тест.проходной_балл;
+  const score = qs.reduce((a,q,qi)=>a + (answers[qi]===q.верный-1?1:0), 0);
+  const pct = Math.round(score/qs.length*100);
+  const allAns = qs.every((q,qi)=>answers[qi]!==undefined);
+  const done = kind==='final' ? !!prog.final : isDone(steps[i]);
+
+  let res = '';
+  if(checked){
+    if(kind==='final'){
+      const passed = pct >= thr;
+      res = `<div class="result"><div class="big"><span class="num ${passed?'':'fail'}">${pct}%</span><div><b>${passed?'Тест пройден':'Тест не пройден'}</b><p>Верно ${score} из ${qs.length}. Проходной балл ${thr}%.</p></div></div></div>`;
+    } else {
+      res = `<div class="result"><b>Верно ${score} из ${qs.length}</b><p>${score===qs.length?'Все ответы верные.':'Правильные ответы отмечены зелёным.'}</p></div>`;
+    }
+  }
+
+  const body = qs.map((q,qi)=>`<div class="q"><div class="q-n">Вопрос ${qi+1} из ${qs.length}</div><div class="q-t">${esc(q.вопрос)}</div>
+    ${q.варианты.map((v,vi)=>{
+      let cls = answers[qi]===vi ? ' sel' : '', tag = '';
+      if(checked){
+        if(vi===q.верный-1){ cls = ' right'; tag = answers[qi]===vi ? 'Верно' : 'Правильный ответ'; }
+        else if(answers[qi]===vi){ cls = ' wrong'; tag = 'Неверно'; }
+      }
+      return `<button class="opt${cls}" ${checked?'disabled':''} data-q="${qi}" data-v="${vi}"><span class="dot"></span><span>${esc(v)}</span><span class="tag">${tag}</span></button>`;
+    }).join('')}</div>`).join('');
+
+  let btns;
+  if(!checked) btns = `<button class="btn" data-act="check" ${allAns?'':'disabled'}>Проверить</button>${allAns?'':'<span style="color:var(--muted);align-self:center;font-size:14px">Ответьте на все вопросы</span>'}`;
+  else btns = `<button class="btn ghost" data-act="retry">Пройти ещё раз</button>`;
+
+  const prevH = kind==='final' ? hashOf(steps.length-1) : hashOf(i-1);
+  const nextH = kind==='final' ? null : hashOf(i+1);
+  const nextB = kind==='final' ? nextBtnHtml('data-href="#/"', 'К содержанию курса') : (nextH ? nextBtnHtml(`data-href="${nextH}"`, i+1>=steps.length?'К итоговому тесту':'Следующий материал') : nextBtnHtml('data-href="#/"', 'К содержанию курса'));
+  app.innerHTML = `<div class="withbar">` + viewerTop(small, kind==='final'?'final':steps[i].id) + `
+    <div class="hero ${heroCls}"><small>${esc(small)}</small><h1>${esc(title)}</h1></div>
+    <div class="content">${kind==='final'?`<p>Проходной балл ${thr}%. ${prog.final&&!checked?`Предыдущий результат: ${prog.final.pct}%.`:''}</p>`:''}${res}${body}</div>
+    <div class="actions">${btns}</div></div>` + viewerBottom(done, title, prevH, nextB);
+
+  app.querySelectorAll('.opt').forEach(b => b.onclick = () => { answers[+b.dataset.q] = +b.dataset.v; const y = scrollY; viewTest(kind, mi, ti); scrollTo(0,y); });
+  const ch = app.querySelector('[data-act="check"]');
+  if(ch) ch.onclick = () => {
+    checked = true;
+    const sc = qs.reduce((a,q,qi)=>a + (answers[qi]===q.верный-1?1:0), 0);
+    const p = Math.round(sc/qs.length*100);
+    if(kind==='final') prog.final = {score:sc, max:qs.length, pct:p, passed:p>=thr, date:stamp()};
+    else prog[steps[i].id] = {score:sc, max:qs.length, date:stamp()};
+    saveProg(); viewTest(kind, mi, ti); window.scrollTo(0,0);
+  };
+  const rt = app.querySelector('[data-act="retry"]');
+  if(rt) rt.onclick = () => { answers = {}; checked = false; viewTest(kind, mi, ti); window.scrollTo(0,0); };
+}
+
+// ---------- маршруты ----------
+let lastRoute = '';
+function route(){
+  if(!user){ viewLogin(); return; }
+  buildSteps();
+  const h = location.hash.replace(/^#\/?/, '');
+  if(h !== lastRoute){ answers = {}; checked = false; editing = ''; lastRoute = h; }
+  const p = h.split('/');
+  if(p[0]==='page'){ const path = p.slice(1).join('/'); const st = steps.find(x=>x.type==='m' && K.модули[x.mi].темы[x.ti].страница===path); location.replace(st ? `#/m/${st.mi}/${st.ti}` : '#/'); return; }
+  if(p[0]==='m') viewMaterial(+p[1], +p[2]);
+  else if(p[0]==='q') viewTest('q', +p[1], +p[2]);
+  else if(p[0]==='final') viewTest('final');
+  else if(p[0]==='profile') viewProfile();
+  else if(p[0]==='settings') viewSettings();
+  else viewCourse(p[0]==='about'||p[0]==='favorites' ? p[0] : '');
+}
+window.addEventListener('hashchange', () => { route(); window.scrollTo(0,0); });
+document.addEventListener('click', e => { if(!e.target.closest('.umenu')) document.querySelectorAll('.umenu.open').forEach(m=>m.classList.remove('open')); });
+
+app.addEventListener('click', e => {
+  const t = e.target.closest('[data-go],[data-href],[data-act],[data-tab]');
+  if(!t || t.disabled) return;
+  if(t.dataset.go){ location.hash = '#/' + t.dataset.go; return; }
+  if(t.dataset.href){ location.hash = t.dataset.href; return; }
+  if(t.dataset.tab !== undefined){ location.hash = '#/' + t.dataset.tab; return; }
+  const a = t.dataset.act;
+  if(a==='fav'){
+    const key = t.dataset.key, fav = Object.assign({}, prog.избранное);
+    if(fav[key]) delete fav[key]; else fav[key] = true;
+    prog.избранное = fav; saveProg();
+    if(document.querySelector('.band .tabs')){ const y = scrollY; route(); scrollTo(0,y); }
+    else { const on = !!fav[key]; t.classList.toggle('on', on); t.setAttribute('aria-pressed', on); t.title = on?'Убрать из избранного':'Добавить в избранное'; }
+    return;
+  }
+  if(a==='sec'){ const key = t.dataset.key; const box = t.closest('.sec'); const c = !box.classList.contains('closed'); box.classList.toggle('closed', c); t.setAttribute('aria-expanded', !c); prog.разделы = Object.assign({}, prog.разделы, {[key]: c}); saveProg(); return; }
+  if(a==='tocmod'){ const mi = +t.dataset.mi; const sec = t.closest('.toc-mod'); const c = !sec.classList.contains('closed'); sec.classList.toggle('closed', c); prog.содержание = Object.assign({}, prog.содержание, {[mi]: c}); saveProg(); return; }
+  if(a==='toc'){ const w = document.querySelector('.toc-wrap'); if(w.classList.contains('open')){ w.classList.remove('open'); document.querySelector('.rb-toc').classList.remove('on'); return; } w.classList.add('open'); document.querySelector('.rb-toc').classList.add('on'); const c = document.querySelector('.toc-i.cur'); if(c) c.scrollIntoView({block:'center'}); return; }
+  if(a==='tocclose'){ if(e.target.closest('.toc-panel') && !e.target.closest('[data-act="tocclose"].x')) return; document.querySelector('.toc-wrap').classList.remove('open'); const rt = document.querySelector('.rb-toc'); if(rt) rt.classList.remove('on'); return; }
+  if(a==='menu'){ const m = t.closest('.umenu'); const open = !m.classList.contains('open'); m.classList.toggle('open', open); t.setAttribute('aria-expanded', open); return; }
+  if(a==='edit'){ editing = t.dataset.what; viewSettings(); return; }
+  if(a==='cancel'){ editing = ''; viewSettings(); return; }
+  if(a==='rmphoto'){ const nu = Object.assign({}, user); delete nu.фото; saveUser(nu); viewSettings(); return; }
+  if(a==='reset'){ if(confirm('Сбросить весь прогресс и результаты тестов? Это нельзя отменить.')){ const keep = prog.избранное; prog = keep ? {избранное: keep} : {}; saveProg(); location.hash = '#/'; route(); } return; }
+  if(a==='logout'){ try{ localStorage.removeItem(KEY_USER); }catch(e){} user = null; prog = {}; location.hash = ''; viewLogin(); }
+  if(a==='continue'){ const ni = nextIndex(); location.hash = ni===-1 ? '#/final' : '#/' + steps[ni].type + '/' + steps[ni].mi + '/' + steps[ni].ti; }
+  if(a==='toggle'){ const mi = +t.dataset.mi; const sec = t.closest('.mod'); const nowClosed = !sec.classList.contains('closed'); sec.classList.toggle('closed', nowClosed); t.setAttribute('aria-expanded', !nowClosed); prog.свернуто = Object.assign({}, prog.свернуто, {[mi]: nowClosed}); saveProg(); return; }
+  if(a==='studied'){ const i = +t.dataset.i; if(!prog[steps[i].id]) prog[steps[i].id] = stamp(); saveProg(); const nh = hashOf(i+1); if(nh) location.hash = nh; else { location.hash = '#/'; route(); } }
+});
+
+route();
+})();
+</script>
+</body>
+</html>

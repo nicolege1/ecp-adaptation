@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Сетевой диск</title>
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/platform.css">
+</head>
+<body>
+
+<main class="wrap">
+
+  <div class="pagehead">
+    <h1>Сетевой диск</h1>
+    <p>Общее файловое хранилище ЕЦП на рабочем компьютере. Ярлык «Сетевой диск» обычно уже лежит
+      на рабочем столе — доступ к папке «Общая» выдан каждому сотруднику.</p>
+  </div>
+
+  <div class="downloadbox">
+    <div class="downloadbox__text">
+      Нет ярлыка <b>«Сетевой диск»</b> на рабочем столе? Скачайте архив с ярлыком и распакуйте
+      в удобное место — например, на рабочий стол.
+    </div>
+    <a class="btn btn--download" href="files/disk-shortcut.zip" download="Сетевой диск.zip">
+      Скачать ярлык (.zip)
+    </a>
+  </div>
+
+  <article class="doc">
+    <h2 class="doc__h2">Что доступно</h2>
+    <p class="doc__p">Каждому сотруднику сразу выдаётся доступ к сетевому диску и к папке
+      <b>«Общая»</b> на нём. В эту папку имеют доступ все сотрудники — на запись и чтение файлов.</p>
+    <p class="doc__p">Доступ в дополнительные папки на сетевом диске согласуется с аналитическим
+      отделом: напишите, какая папка нужна и зачем, — доступ откроют.</p>
+    <p class="doc__p">Ярлыки, инструкции и общая папка инструкций лежат на самом сетевом диске
+      по пути <code>"\\Общая папка\\Инструкции"</code>, ярлыки — в
+      <code>"\\Общая папка\\ярлыки"</code>.</p>
+  </article>
+
+  <p class="doc__download">
+    <a href="pamyatka.html">памятка сотруднику</a></p>
+
+</main>
+
+<script>document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a[href^='http']");if(a&&a.host!==location.host){a.target="_blank";a.rel="noopener";}},true);</script></body>
+</html>

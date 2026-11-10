@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Единый центр поддержки — кто на смене сегодня</title>
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css?v=20261103103616">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/platform.css">
+</head>
+<body>
+
+<main class="wrap">
+
+  <section class="hero">
+    <div class="hero__date" id="todayDate">&nbsp;</div>
+    <div class="hero__label">Сегодня на смене</div>
+    <div class="person" id="todayPerson"></div>
+    <div class="chips" id="todayChips"></div>
+    <div class="hero__status-note" id="todayNote"></div>
+  </section>
+
+  <section class="tomorrow" id="tomorrow">
+    <span class="tomorrow__label">Завтра:</span>
+    <span id="tomorrowBody">…</span>
+  </section>
+
+  <a class="linkcard" href="grafik.html">
+    <span class="linkcard__icon" aria-hidden="true">▦</span>
+    <span>
+      <span class="linkcard__title">График работы системных администраторов ЕЦП</span>
+      <span class="linkcard__sub">Помесячный график: выберите любую дату и посмотрите, кто на смене</span>
+    </span>
+    <span class="linkcard__arrow" aria-hidden="true">→</span>
+  </a>
+
+  <a class="linkcard linkcard--alt" href="pamyatka.html">
+    <span class="linkcard__icon" aria-hidden="true">▤</span>
+    <span>
+      <span class="linkcard__title">Памятка сотрудникам по работе с ИТ структурой ЕЦП</span>
+      <span class="linkcard__sub">Учётная запись, сетевой диск, принтеры, почта, Wi-Fi, DIT Cloud, техподдержка, ТДМ — по шагам</span>
+    </span>
+    <span class="linkcard__arrow" aria-hidden="true">→</span>
+  </a>
+
+  <a class="linkcard linkcard--blue" href="instrukcii.html">
+    <span class="linkcard__icon" aria-hidden="true">☰</span>
+    <span>
+      <span class="linkcard__title">Полезные инструкции</span>
+      <span class="linkcard__sub">Wi-Fi, почта MOS, облако DIT, сетевой принтер, сетевой диск и другое — короткие памятки по шагам</span>
+    </span>
+    <span class="linkcard__arrow" aria-hidden="true">→</span>
+  </a>
+
+  <a class="helpcard helpcard--link" href="dit.html">
+    <div class="helpcard__icon" aria-hidden="true">!</div>
+    <div class="helpcard__body">
+      <h2 class="helpcard__title">Не работает компьютер, принтер или отвалилась сеть?</h2>
+      <p class="helpcard__text">Вам в <b>Техподдержку ДИТ</b> — заявка оформляется на портале
+        <b>moscow.itsm.mos.ru</b>. Инженер ДИТ на локации: 5/2, с 9:00 до 18:00. В нерабочее время
+        помощь оказывают удалённая поддержка ДИТ, выездной инженер или системный администратор ЕЦП —
+        в пределах своих прав.</p>
+      <p class="helpcard__more">Инструкция, памятка и видео — открыть →</p>
+    </div>
+  </a>
+
+</main>
+
+<script src="data.js?v=20261103103616"></script>
+<script src="assets/app.js?v=20261103103616"></script>
+<script>
+(function () {
+  'use strict';
+  var E = window.ECP, G = window.GRAFIK;
+  var today = E.moscowToday();
+
+  /* ---------- сегодня ---------- */
+  document.getElementById('todayDate').textContent =
+    E.humanDate(today) + ', ' + E.weekday(today);
+
+  var shift = E.shiftOf(today);
+  var personEl = document.getElementById('todayPerson');
+  var chipsEl = document.getElementById('todayChips');
+
+  if (shift.status === 'shift') {
+    var key = shift.admins[0];
+    var color = E.colorOf(key);
+    personEl.innerHTML =
+      '<div class="avatar avatar--' + color + '">' + E.initials(key) + '</div>' +
+      '<div>' +
+        '<div class="person__name">' + shift.names + '</div>' +
+        '<div class="person__hours">Смена <b>' + shift.hours + '</b></div>' +
+      '</div>';
+    var day = G.days[today];
+    day.notes.forEach(function (n) {
+      var cls = n.type === 'vacation' ? 'chip chip--warn' : 'chip chip--calm';
+      chipsEl.insertAdjacentHTML('beforeend', '<span class="' + cls + '">' + n.text + '</span>');
+    });
+    /* строку-подсказку под сменой не показываем */
+    var noteEl = document.getElementById('todayNote');
+    if (noteEl) noteEl.remove();
+  } else if (shift.status === 'dit') {
+    personEl.innerHTML =
+      '<div class="avatar avatar--none">ДИТ</div>' +
+      '<div>' +
+        '<div class="person__name">Дежурит ДИТ</div>' +
+        '<div class="person__hours">Администратор ЕЦП сегодня не на смене</div>' +
+      '</div>';
+    if (shift.note) chipsEl.insertAdjacentHTML('beforeend', '<span class="chip chip--calm">' + shift.note + '</span>');
+    document.getElementById('todayNote').textContent = 'Обращения принимает дежурная смена ДИТ.';
+  } else {
+    personEl.innerHTML =
+      '<div class="avatar avatar--none">—</div>' +
+      '<div>' +
+        '<div class="person__name">Нет данных</div>' +
+        '<div class="person__hours">В графике на эту дату смена не указана</div>' +
+      '</div>';
+    document.getElementById('todayNote').textContent =
+      'Уточните дежурного по графику или у начальника отдела.';
+  }
+
+  /* ---------- завтра ---------- */
+  var t = E.parseISO(today);
+  t.setDate(t.getDate() + 1);
+  var tomorrow = E.iso(t);
+  var s2 = E.shiftOf(tomorrow);
+  var body;
+  if (s2.status === 'shift') {
+    var k2 = s2.admins[0];
+    body = '<span class="dot dot--' + E.colorOf(k2) + '"></span> ' +
+      '<span class="tomorrow__name">' + s2.names + '</span>, ' +
+      E.humanDate(tomorrow) + ' (' + E.weekday(tomorrow) + '), ' + s2.hours;
+  } else if (s2.status === 'dit') {
+    body = '<span class="dot dot--none"></span> <span class="tomorrow__name">Поддержка ДИТ</span>, ' +
+      E.humanDate(tomorrow) + ' (' + E.weekday(tomorrow) + ')';
+  } else {
+    body = 'нет данных на ' + E.humanDate(tomorrow) + ' (' + E.weekday(tomorrow) + ')';
+  }
+  document.getElementById('tomorrowBody').innerHTML = body;
+})();
+</script>
+<script>document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a[href^='http']");if(a&&a.host!==location.host){a.target="_blank";a.rel="noopener";}},true);</script></body>
+</html>

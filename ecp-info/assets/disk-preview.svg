@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" role="img" aria-label="Сетевой диск">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F5F6EF"/>
+      <stop offset="1" stop-color="#E4E6D8"/>
+    </linearGradient>
+    <filter id="sh2" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#2F3A2E" flood-opacity="0.16"/>
+    </filter>
+    <pattern id="dots2" width="26" height="26" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.1" fill="#6D7839" opacity="0.10"/>
+    </pattern>
+  </defs>
+
+  <rect width="800" height="600" fill="url(#bg2)"/>
+  <rect width="800" height="600" fill="url(#dots2)"/>
+
+  <!-- папка -->
+  <g filter="url(#sh2)">
+    <path d="M214 214 h104 l34 44 h234 a18 18 0 0 1 18 18 v170 a18 18 0 0 1 -18 18 H214 a18 18 0 0 1 -18 -18 V232 a18 18 0 0 1 18 -18 z"
+          fill="#EEC145"/>
+    <path d="M214 214 h104 l34 44 h-138 z" fill="#E2B12F"/>
+    <rect x="232" y="300" width="336" height="112" rx="10" fill="#FFFFFF" opacity="0.93"/>
+    <g stroke="#6D7839" stroke-width="4" stroke-linecap="round" fill="none">
+      <path d="M256 344 h288"/>
+      <path d="M256 372 h216"/>
+      <path d="M256 400 h252"/>
+    </g>
+  </g>
+
+  <!-- бейдж «сеть» -->
+  <g filter="url(#sh2)">
+    <circle cx="596" cy="214" r="58" fill="#FFFFFF"/>
+    <g stroke="#456CAB" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="566" y="196" width="60" height="24" rx="5"/>
+      <rect x="566" y="228" width="60" height="24" rx="5"/>
+      <path d="M578 208 h3 M578 240 h3"/>
+    </g>
+  </g>
+
+  <g font-family="Ubuntu, Segoe UI, Arial, sans-serif" text-anchor="middle">
+    <text x="400" y="520" font-size="30" fill="#525A2B" font-weight="700">Сетевой диск</text>
+    <text x="400" y="556" font-size="19" fill="#6B7350">общая папка ЕЦП · hq.corp.mos.ru</text>
+  </g>
+</svg>

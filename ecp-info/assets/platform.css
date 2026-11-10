@@ -1,0 +1,105 @@
+/* Оформление страниц ecp-info внутри платформы адаптации:
+   строго, как курс ИДПО, в цветах ЕЦП. Подключается после style.css. */
+
+:root{
+  --olive:#6E7835;
+  --olive-dark:#5A632B;
+  --olive-light:#AFBD80;
+  --olive-tint:#EEF1E3;
+  --green:#6E7835;
+  --blue:#6E7835;
+  --sand:#F5F5F5;
+  --accent:#6E7835;
+  --red:#C82E3E;
+  --ink:#212529;
+  --ink-soft:#6C7277;
+  --bg:#FFFFFF;
+  --card:#FFFFFF;
+  --line:#E3E4E6;
+  --radius:4px;
+  --shadow:none;
+  --font:"Golos Text", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+}
+
+body{background:#fff;color:var(--ink);font-size:16px;line-height:1.6}
+.wrap{max-width:860px;padding:0 32px}
+main{padding:36px 0 56px}
+
+/* заголовки */
+.pagehead h1,.doc__title{font-size:28px;line-height:1.25;font-weight:600;letter-spacing:-.01em;color:var(--ink);margin:0 0 10px}
+.pagehead p{color:var(--ink-soft);font-size:16px;margin:0 0 24px}
+.doc__h2{font-size:21px;font-weight:600;color:var(--ink);margin:36px 0 12px;padding-top:20px;border-top:1px solid var(--line)}
+.doc__h3{font-size:17px;font-weight:600;color:var(--ink)}
+
+/* карточки и блоки: без теней, тонкие линии, малое скругление */
+.hero,.calendar,.dayinfo,.doc,.helpcard,.docitem,.guidecard,.linkcard,.cta,.shortcut,.contact,.toc,.downloadbox,.video,.pageshot,.shot,.step{
+  border-radius:var(--radius)!important;box-shadow:none!important;border-color:var(--line)!important;background:#fff}
+.doc{border:0!important;padding:0!important}
+
+/* убираем значки-символы */
+.linkcard__icon,.helpcard__icon,.cta__icon,.guidecard__thumb--glyph,.docitem__icon,.shortcut__icon{display:none!important}
+.linkcard__arrow,.cta__arrow{color:var(--olive)}
+
+/* ссылки и кнопки */
+a{color:var(--olive)}
+.doc a,.doc__more-link,.helpcard__text a{color:var(--olive);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+.btn,.btn--primary,.btn--download{border-radius:999px!important;box-shadow:none!important}
+.btn--primary,.btn--download{background:var(--olive)!important;border-color:var(--olive)!important;color:#fff!important}
+.btn--primary:hover,.btn--download:hover{background:var(--olive-dark)!important}
+
+/* оглавление и плашки */
+.toc{background:var(--olive-tint)!important;border:0!important;border-left:3px solid var(--olive)!important}
+.alert,.doc__note{border-radius:var(--radius)!important;border-left:3px solid var(--olive)!important;background:var(--olive-tint)!important;color:var(--ink)!important}
+.alert--red{border-left-color:var(--red)!important;background:#FBEBED!important}
+.chip{border-radius:3px!important}
+
+/* картинки-скриншоты */
+.doc figure img,.shot img,.pageshot img{border:1px solid var(--line);border-radius:var(--radius)}
+
+/* ---------- график ---------- */
+.legend{gap:8px 22px;margin:0 0 18px;font-size:14px;color:var(--ink-soft)}
+.swatch{width:12px!important;height:12px!important;border-radius:2px!important;box-shadow:none!important}
+.swatch--blue{background:var(--olive)!important}
+.swatch--green{background:var(--olive-light)!important}
+.swatch--dit{background:#C9CCD0!important}
+.swatch--none{background:#fff!important;border:1px solid var(--line)!important}
+
+.calendar{border:1px solid var(--line)!important;padding:0!important;overflow:hidden}
+.cal__bar{padding:14px 16px;border-bottom:1px solid var(--line);background:#F5F5F5;gap:10px}
+.cal__title{font-size:18px;font-weight:600;color:var(--ink);text-transform:none}
+.btn--icon{width:34px;height:34px;border-radius:50%!important;background:#fff!important;border:1px solid var(--line)!important;color:var(--ink)!important}
+.cal__jump{border:1px solid var(--line);border-radius:4px;padding:6px 10px;font:inherit;font-size:14px;background:#fff}
+.cal__dow{border-bottom:1px solid var(--line);gap:0!important;padding:0!important}
+.cal__dow div{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);padding:8px 10px;text-align:left}
+.cal__grid{gap:0!important;padding:0!important;background:#fff}
+.day{border:0!important;border-right:1px solid var(--line)!important;border-bottom:1px solid var(--line)!important;border-radius:0!important;background:#fff!important;box-shadow:none!important;min-height:84px;padding:8px 10px!important;position:relative;transition:background .15s}
+.day:nth-child(7n){border-right:0!important}
+.day:hover{background:#FAFBF7!important}
+.day--empty{background:#FAFAFA!important}
+.day__num{font-size:14px;font-weight:600;color:var(--ink)}
+.day--weekend .day__num{color:var(--ink-soft)}
+.day__who{font-size:12.5px;color:var(--ink)!important;line-height:1.3;margin-top:6px;display:block}
+.day__note,.day__note-sub{font-size:11.5px;color:var(--ink-soft)!important}
+.day::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:transparent}
+.day--blue::before{background:var(--olive)}
+.day--green::before{background:var(--olive-light)}
+.day--dit::before{background:#C9CCD0}
+.day--blue,.day--green,.day--dit,.day--none{background:#fff!important}
+.day--today{box-shadow:inset 0 0 0 2px var(--olive)!important}
+.day--today .day__num{color:var(--olive)}
+.day--selected{background:var(--olive-tint)!important}
+
+.dayinfo{border:1px solid var(--line)!important;border-left:3px solid var(--olive)!important;padding:18px 22px!important;margin-top:18px}
+.dayinfo__date{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+.dayinfo__name{font-size:20px;font-weight:600;color:var(--ink)}
+
+@media (max-width:700px){
+  .wrap{padding:0 16px}
+  main{padding:24px 0 40px}
+  .pagehead h1,.doc__title{font-size:23px}
+  .day{min-height:58px;padding:6px 5px!important}
+  .day__num{font-size:13px}
+  .day__who{font-size:10.5px}
+  .cal__dow div{padding:6px 5px;font-size:10.5px}
+  .cal__bar{flex-wrap:wrap}
+}

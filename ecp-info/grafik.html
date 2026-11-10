@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>График работы системных администраторов ЕЦП</title>
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css?v=20261103103616">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/platform.css">
+</head>
+<body>
+
+<main class="wrap">
+
+  <div class="pagehead">
+    <h1>График работы системных администраторов ЕЦП</h1>
+    <p>Смены с <span id="shiftRange">09:00 – 18:00</span>. Выберите месяц или любую дату — внизу будет видно, кто в этот день на смене.</p>
+  </div>
+
+  <div class="legend">
+    <span class="legend__item"><span class="swatch swatch--blue"></span> Гришуткин Сергей</span>
+    <span class="legend__item"><span class="swatch swatch--green"></span> Абрамов Валентин</span>
+    <span class="legend__item"><span class="swatch swatch--dit"></span> поддержка ДИТ</span>
+    <span class="legend__item"><span class="swatch swatch--none"></span> нет данных</span>
+  </div>
+
+  <section class="calendar">
+    <div class="cal__bar">
+      <button class="btn btn--icon" id="prev" title="Предыдущий месяц">‹</button>
+      <div class="cal__title" id="calTitle">—</div>
+      <button class="btn btn--icon" id="next" title="Следующий месяц">›</button>
+      <span class="cal__spacer"></span>
+      <input class="cal__jump" type="date" id="jump" title="Перейти к дате">
+      <button class="btn btn--primary" id="todayBtn">Сегодня</button>
+    </div>
+    <div class="cal__dow">
+      <div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div>
+    </div>
+    <div class="cal__grid" id="grid"></div>
+  </section>
+
+  <section class="dayinfo" id="dayinfo"></section>
+
+</main>
+
+<script src="data.js?v=20261103103616"></script>
+<script src="https://ecp-info.ru/data.js"></script>
+<script src="assets/app.js?v=20261103103616"></script>
+<script src="assets/grafik.js?v=20261103103616"></script>
+<script>document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a[href^='http']");if(a&&a.host!==location.host){a.target="_blank";a.rel="noopener";}},true);</script></body>
+</html>
